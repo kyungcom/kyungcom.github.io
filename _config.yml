@@ -20,7 +20,7 @@ title                    : "노력의 흔적"
 title_separator          : "-"
 subtitle                 : # site tagline that appears below site title in masthead
 name                     : "kyungcom"
-description              : "An amazing website."
+description              : "멋진 개발자의 족적"
 url                      : "https://kyungcom.github.io" # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
 baseurl                  : "" # the subpath of your site, e.g. "/blog"
 repository               : "kyungcom/kyungcom.github.io" # GitHub username/repo-name e.g. "mmistakes/minimal-mistakes"
