@@ -146,16 +146,29 @@ text우리는 하루에도 수백개의 웹 페이지를 드나듭니다. 그 �
 
 <br>
 
+- CSS
+
+```html
+<style> css내용 </style>
+```
+
+이 안의 내용은 CSS라고 알려주기 위한 태그입니다.
+
+<br>
+
 - 본문을 설명을 묶는 태그
 
 ```html
 <head>
   <title> 페이지 제목 </title>
   <meta charset="utf-8">
+  <style> 
+    CSS내용
+  </style>
 </head>
 ```
 
-title태그나 meta태그처럼 페이지 내에 직접 본문으로 나타나지 않는 정보들은 head태그로 묶어 줍니다.
+title태그나 meta태그, style태그처럼 페이지 내에 직접 본문으로 나타나지 않는 정보들은 head태그로 묶어 줍니다.
 
 <br>
 
@@ -181,6 +194,8 @@ title태그나 meta태그처럼 페이지 내에 직접 본문으로 나타나�
 <a href="https://www.kyungcom.dev">이 글자를 누르면 이동합니다. </a>
 ```
 앞서 언급했듯이 태그에는 속성들이 있는데 a태그는 어디로 이동할 것인지 나타내는 href와 새 탭에서 열 수 있도록 하는 target="_blank" 같은 속성 혹은 마우스 커서를 올리면 툴팁이 나타나게 하는 title="내용" 같은 속성들이 존재합니다.
+
+
 
 <br>
 <br>
