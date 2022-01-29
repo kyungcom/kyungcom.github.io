@@ -1,5 +1,5 @@
 ---
-title: "Javascript Jquery"
+title: "Javascript_Jquery"
 excerpt: "Jquery에 대해서 알아보자"
 last_modified_at: 2022-01-28T12:03:16-13:00
 categories:
@@ -14,7 +14,7 @@ toc_label: "Javascript"
 
 ## 제이쿼리란?
 
-<a href="https://jquery.com">제이쿼리</a> 홈페이지에 따르면 jQuery는 빠르고 작고 기능이 풍부한 JavaScript 라이브러리입니다. 여러 브라우저에서 작동하는 사용하기 쉬운 API를 사용하여 HTML 문서 탐색 및 조작, 이벤트 처리, 애니메이션 및 Ajax와 같은 작업을 훨씬 더 간단하게 만듭니다.
+<a href="https://jquery.com" style="color:sky;">제이쿼리 홈페이지</a>에 따르면 jQuery는 빠르고 작고 기능이 풍부한 JavaScript 라이브러리입니다. 여러 브라우저에서 작동하는 사용하기 쉬운 API를 사용하여 HTML 문서 탐색 및 조작, 이벤트 처리, 애니메이션 및 Ajax와 같은 작업을 훨씬 더 간단하게 만듭니다.
 <hr>
 
 ## 제이쿼리의 기능
