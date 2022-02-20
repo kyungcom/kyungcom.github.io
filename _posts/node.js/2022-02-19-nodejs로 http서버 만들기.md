@@ -1,7 +1,7 @@
 ---
 title: "Node.js http서버"
 excerpt: "Node.js로 http서버를 만들어보자"
-last_modified_at: 2022-02-19T16:03:16-23:59
+last_modified_at: 2022-02-20T16:03:16-23:59
 categories:
   - Node.js
 tags:
@@ -85,6 +85,139 @@ server.on('error', (error) => {
 - DELETE: 서버의 자원을 삭제하고자 할 때 사용합니다. 본문에 데이터를 넣지 않습니다.
 - OPTIONS: 요청을 하기 전에 통신 옵션을 설명하기 위해 사용합니다.
 
+### 쿠키와 세션
+
+1. 쿠키란?
+서버가 클라이언트가 누구인지 기억하기 위해서 키-값 쌍으로 이루어진 데이터들을 클라이언트에 보내고, 클라이언트는 요청시에 쿠키를 보내 자신이 누구인지 알리는 데 사용됩니다.
+<br> 쿠키는 요청의 헤더에 담겨 전송됩니다.
+
+- 쿠키명 = 쿠키값: 기본적인 쿠기의 값입니다.
+- Expires= 날짜: 만료 기한입니다. 기본값은 클라이언트가 종료될 때 까지 입니다.
+- Max-age=초: 해당 초가 지나면 쿠키가 제거됩니다.
+- Domain=도메인명: 쿠키가 전송될 도메인을 특정할 수 있습니다.
+- Path=URL: 쿠키가 전송될 URL을 특정할 수 있습니다.
+- Secure:HTTPS일 경우에만 쿠키가 전송됩니다.
+- HttpOnly:설정 시 자바스크립트에서 쿠키에 접근할 수 없습니다.
+
+2. 세션이란?
+- 쿠키에는 세션에 접근을 위한 키를 보내고, 그 키를 이용하여 서버 내에 세션을 조회하여 사용자를 확인하는 방법
+<br>
+
+- 예시
+
+```javascript
+const http = require('http');
+const fs = require('fs').promises;
+const url = require('url');
+const qs = require('querystring');
+
+const parseCookies = (cookie = '') =>
+  cookie
+    .split(';')
+    .map(v => v.split('='))
+    .reduce((acc, [k, v]) => {
+      acc[k.trim()] = decodeURIComponent(v);
+      return acc;
+    }, {});
+
+const session = {};
+
+http.createServer(async (req, res) => {
+  const cookies = parseCookies(req.headers.cookie);
+  if (req.url.startsWith('/login')) {
+    const { query } = url.parse(req.url);
+    const { name } = qs.parse(query);
+    const expires = new Date();
+    expires.setMinutes(expires.getMinutes() + 5);
+    const uniqueInt = Date.now();
+    session[uniqueInt] = {
+      name,
+      expires,
+    };
+    res.writeHead(302, {
+      Location: '/',
+      'Set-Cookie': `session=${uniqueInt}; Expires=${expires.toGMTString()}; HttpOnly; Path=/`,
+    });
+    res.end();
+  // 세션쿠키가 존재하고, 만료 기간이 지나지 않았다면
+  } else if (cookies.session && session[cookies.session].expires > new Date()) {
+    res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
+    res.end(`${session[cookies.session].name}님 안녕하세요`);
+  } else {
+    try {
+      const data = await fs.readFile('./cookie2.html');
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+      res.end(data);
+    } catch (err) {
+      res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
+      res.end(err.message);
+    }
+  }
+})
+  .listen(8085, () => {
+    console.log('8085번 포트에서 서버 대기 중입니다!');
+  });
+```
+<br><br>
+
+### https와 http2
+
+1. https란?
+웹 서버에 SSL 암호화를 추가한 모듈입니다. GET이나 POST요청을 할 때 오가는 데이터를 암호화해서 중간에 다른 사람이 요청을 가로채더라도 내용을 볼 수 없습니다.<br>
+https를 이용하려면 인증기관에소 인증서를 구입해야합니다.
+
+```javascript
+const https = require('https');
+const fs = require('fs');
+
+https.createServer({
+  cert: fs.readFileSync('도메인 인증서 경로'),
+  key: fs.readFileSync('도메인 비밀키 경로'),
+  ca: [
+    fs.readFileSync('상위 인증서 경로'),
+    fs.readFileSync('상위 인증서 경로'),
+  ],
+}, (req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+  res.write('<h1>Hello Node!</h1>');
+  res.end('<p>Hello Server!</p>');
+})
+  .listen(443, () => {
+    console.log('443번 포트에서 서버 대기 중입니다!');
+  });
+```
+
+<br><br>
+
+2. http2란?
+HTTP/2는 Multiplexed Streams를 이용하여 Connection 한 개로 동시에 여러 개의 메시지를 주고 받을 수 있으며 응답은 순서에 상관없이 Stream으로 주고 받습니다. HTTP/1.1의 Connection Keep-Alive, Pipelining의 개선 버전이라 보면 됩니다.<br>
+
+```javascript
+const http2 = require('http2');
+const fs = require('fs');
+
+http2.createSecureServer({
+  cert: fs.readFileSync('도메인 인증서 경로'),
+  key: fs.readFileSync('도메인 비밀키 경로'),
+  ca: [
+    fs.readFileSync('상위 인증서 경로'),
+    fs.readFileSync('상위 인증서 경로'),
+  ],
+}, (req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+  res.write('<h1>Hello Node!</h1>');
+  res.end('<p>Hello Server!</p>');
+})
+  .listen(443, () => {
+    console.log('443번 포트에서 서버 대기 중입니다!');
+  });
+```
+
+<br><br>
+
+### cluster
+
+- 싱글 프로세스로 동작하는 노드가 cpu의 코어를 모두 사용할 수 있게 해주는 모듈입니다.
 
 ## 참고문헌
 
