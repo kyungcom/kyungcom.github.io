@@ -191,3 +191,8 @@ public class Start{
 <br>
 
 ### 캡슐화: 정보은닉
+
+- public : 모두가 접근 가능
+- protected : 상속 / 같은 패키지 내의 클래스에서 접근 가능
+- default : 아무런 접근 제한자를 명시하지 않으면 default 값이 되며, 동일한 패키지 내에서만 접근이 가능
+- private : 자기 자신의 클래스 내에서만 접근이 가능
